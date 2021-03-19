@@ -1,0 +1,10 @@
+{
+  "web": {
+    "username": "login",
+    "password": "password"
+  },
+  "db": {
+    "username": "login",
+    "password": "password"
+  }
+}
