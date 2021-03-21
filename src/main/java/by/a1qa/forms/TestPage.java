@@ -35,7 +35,7 @@ public class TestPage extends Form {
     public Test getTest() {
         Test test = new Test();
         test.setName(getTestName());
-        test.setMethodName(getMethodName());
+        test.setMethod(getMethodName());
         test.setEnv(getEnvironment());
         return test;
     }

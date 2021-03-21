@@ -17,6 +17,7 @@ import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import org.testng.collections.CollectionUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -49,19 +50,18 @@ public class FinalTest {
         String project = "Nexage";
         String id = StringUtils.getProjectId(projectsForm.getIdOfProject(project));
         projectsForm.clickProjectButton(project);
-        System.out.println(APIUtils.testsPost(id));
-       // TestsResponse testsResponse = APIUtils.postTests(id);
+        TestsResponse testsResponse = APIUtils.postTests(id);
         AqualityServices.getLogger().info("Checking status code");
-     //   Assert.assertEquals(testsResponse.getStatusCode(), HttpStatus.SC_OK);
-     //   AqualityServices.getLogger().info("Status code is " + testsResponse.getStatusCode());
+        Assert.assertEquals(testsResponse.getStatusCode(), HttpStatus.SC_OK);
+        AqualityServices.getLogger().info("Status code is " + testsResponse.getStatusCode());
         AqualityServices.getLogger().info("Checking json");
-      //  Assert.assertTrue(testsResponse.isJSON());
-      //  List<by.a1qa.models.Test> dbTests;
-
-      //  Assert.assertThat(pageTests, is(sortedDescendingByDate()));
-      //  Assert.assertEquals(dbTests, pageTests, "Tests received from the page isn't equal to tests received from a database");*/
+        Assert.assertTrue(testsResponse.isJSON());
+        List<by.a1qa.models.Test> pageTestsAPI = testsResponse.getObject();
+        int numberOfProjects = 20;
+        List<by.a1qa.models.Test> sortedTestsAPIList = ListUtils.getSortedProjectList(pageTestsAPI, numberOfProjects);
         List<by.a1qa.models.Test> pageTests = projectForm.getTests();
-        projectForm.getMenuForm().clickHomeButton();
+        Assert.assertEquals(sortedTestsAPIList, pageTests, "Tests received from the page isn't equal to tests received from a api");
+       /* projectForm.getMenuForm().clickHomeButton();
         Assert.assertTrue(projectsForm.state().waitForDisplayed(), "Failed to return the projects page");
         projectsForm.clickAddButton();
         String newProject = "32245";
@@ -74,7 +74,7 @@ public class FinalTest {
         browser.refresh();
         Assert.assertTrue(projectsForm.isProjectDisplayed(newProject), "Saved project isn't diplsayed in projects list");
         projectsForm.clickProjectButton(newProject);
-        String testName = "newTest";  String testMethod = "Test"; String testEnv = "localhost";
+        String testName = "newTest";  String testMethod = "Test"; String testEnv = "localhost";*/
      //   DataManager.setTestProject(newProject, testName, testMethod, testEnv);
       //  ConnectionManager.closeConnection();
     }

@@ -20,7 +20,7 @@ import java.util.Optional;
 public class ProjectForm extends Form {
     private final MenuForm menuForm = new MenuForm();
     private static final String PROJECT_NAME_SEPARATOR = "Home";
-    private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss.S";
+    private static final String dateTimeFormat = "yyyy-MM-dd HH:mm:ss.S";
     private static final String TEST_LOC = "tr";
     private static final String TEST_NAME_LOC = "td:nth-child(1)";
     private static final String TEST_NAME_BUTTON_LOC = "a";
@@ -63,7 +63,6 @@ public class ProjectForm extends Form {
     private List<Test> getTestsList(List<ITextBox> testsBoxes) {
         List<Test> tests = new ArrayList<Test>(testsBoxes.size());
         for (ITextBox testBox : testsBoxes) {
-            testBox.getJsActions().scrollToTheCenter();
             tests.add(createTest(testBox));
         }
         return tests;
@@ -72,7 +71,6 @@ public class ProjectForm extends Form {
     private Test getTest(List<ITextBox> testsBoxes, String testName) {
         Test test = null;
         for (ITextBox testBox : testsBoxes) {
-            testBox.getJsActions().scrollToTheCenter();
             if (getTestName(testBox).equals(testName)) {
                 test = createTest(testBox);
             }
@@ -83,8 +81,8 @@ public class ProjectForm extends Form {
     private Test createTest(ITextBox testBox) {
         Test test = new Test();
         test.setName(getTestName(testBox));
-        test.setMethodName(getTestMethod(testBox));
-        test.setStatusId(getTestResult(testBox).orElse(null));
+        test.setMethod(getTestMethod(testBox));
+        test.setStatus(getTestResult(testBox));
         test.setStartTime(getTestStartTime(testBox));
         test.setEndTime(getTestEndTime(testBox));
         return test;
@@ -100,7 +98,6 @@ public class ProjectForm extends Form {
     private ITextBox getTestBox(List<ITextBox> testsBoxes, String testName) {
         ITextBox testBox = null;
         for (ITextBox box : testsBoxes) {
-            box.getJsActions().scrollToTheCenter();
             if (getTestName(box).equals(testName)) {
                 testBox = box;
             }
@@ -116,13 +113,13 @@ public class ProjectForm extends Form {
         return testBox.findChildElement(By.cssSelector(TEST_METHOD_LOC), ElementType.TEXTBOX).getText();
     }
 
-    private Optional<Integer> getTestResult(ITextBox testBox) {
+    private String getTestResult(ITextBox testBox) {
         String testResult = testBox.findChildElement(By.cssSelector(TEST_RESULT_LOC), ElementType.TEXTBOX).getText();
-        return testResult.equals(TestStatus.PASSED.getDescription()) ? Optional.of(TestStatus.PASSED.getStatusId())
-                : testResult.equals(TestStatus.FAILED.getDescription()) ? Optional.of(TestStatus.FAILED.getStatusId())
+        return testResult.equals(TestStatus.PASSED.getDescription()) ? (TestStatus.PASSED.getStatusIdAsString())
+                : testResult.equals(TestStatus.FAILED.getDescription()) ? (TestStatus.FAILED.getStatusIdAsString())
                 : testResult.equals(TestStatus.SKIPPED.getDescription())
-                ? Optional.of(TestStatus.SKIPPED.getStatusId())
-                : Optional.empty();
+                ? (TestStatus.SKIPPED.getStatusIdAsString())
+                : null;
     }
 
     private LocalDateTime getTestStartTime(ITextBox testBox) {
@@ -137,7 +134,7 @@ public class ProjectForm extends Form {
         LocalDateTime dateTime = null;
         String time = testBox.findChildElement(By.cssSelector(locator), ElementType.TEXTBOX).getText();
         if (Objects.nonNull(time) && !time.isBlank()) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateTimeFormat);
             dateTime = LocalDateTime.parse(time, formatter);
         }
         return dateTime;

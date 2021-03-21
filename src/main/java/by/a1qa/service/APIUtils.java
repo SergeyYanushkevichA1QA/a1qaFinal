@@ -87,7 +87,7 @@ public class  APIUtils {
         String parametersString = StringUtils.getParametersString(params);
         AqualityServices.getLogger().info("Build request: GET " + path);
         return HttpRequest.newBuilder()
-                .GET()
+                .POST(HttpRequest.BodyPublishers.ofString(parametersString))
                 .uri(URI.create(urlMethod + path + "?" + parametersString))
                 .build();
     }

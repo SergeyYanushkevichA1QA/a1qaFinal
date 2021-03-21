@@ -1,16 +1,29 @@
 package by.a1qa.models;
 
-import java.time.LocalDateTime;
+import by.a1qa.entity.LocalDateTimeDeserializator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import java.time.LocalDateTime;
+import java.util.Objects;
+
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Test {
+
     private int id;
     private String name;
-    private Integer statusId;
-    private String methodName;
+    private String status;
+    private String method;
     private Integer projectId;
     private Integer sessionId;
+
+    @JsonDeserialize(using = LocalDateTimeDeserializator.class)
     private LocalDateTime startTime;
+
+    @JsonDeserialize(using = LocalDateTimeDeserializator.class)
     private LocalDateTime endTime;
+
     private String env;
     private Integer authorId;
 
@@ -30,20 +43,20 @@ public class Test {
         this.name = name;
     }
 
-    public Integer getStatusId() {
-        return statusId;
+    public String getStatus() {
+        return status;
     }
 
-    public void setStatusId(Integer statusId) {
-        this.statusId = statusId;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public String getMethodName() {
-        return methodName;
+    public String getMethod() {
+        return method;
     }
 
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
+    public void setMethod(String method) {
+        this.method = method;
     }
 
     public Integer getProjectId() {
@@ -92,5 +105,23 @@ public class Test {
 
     public void setAuthorId(Integer authorId) {
         this.authorId = authorId;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Test test = (Test) o;
+        return name.equals(test.name) &&
+                method.equals(test.method) &&
+                status.equals(test.status) &&
+                Objects.equals(startTime, test.startTime) &&
+                Objects.equals(endTime, test.endTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, method, status, startTime, endTime);
     }
 }
